@@ -37,32 +37,21 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
+## Exercise
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+"Broken Routing" Exercise
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### OBJECTIVES:
+1) Bug: Multiple "pages" are showing up at the same time when we only expect one at a time. Fix this.
 
-### Code Splitting
+2) Bug: Clicking through the link pages does not properly switch between the page components. Fix this.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+3) Swap the order so the navigation bar is below the page content.
 
-### Analyzing the Bundle Size
+4) Modify the app so '/contact' shows "Contact Page" and "/contact/us" shows "Contact Page for US".
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+### STRETCH:
 
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+1) Add a login field in App.
+2) Update the app state with the username entered in the login field.
+3) Pass that username down to your Home page so that it's personalized and says "Hello <username>, welcome home."
