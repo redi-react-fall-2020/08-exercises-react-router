@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Children } from "react";
 import "./App.css";
 import { render } from "react-dom";
 
@@ -8,26 +8,24 @@ import {
   Route,
   Link,
   useLocation,
-  useParamsa
+  useParams,
+  useHistory,
+  Redirect,
+  NavLink
 } from "react-router-dom";
 
 /*
-"Broken Routing" Exercise
+"Routing 200"
 
-OBJECTIVES:
-1) Bug: Multiple "pages" are showing up at the same time when we only expect one at a time. Fix this.
+LESSON PLAN:
+1) Basic routing setup
+2) Navlink & active style
+3) Homepage (exact)
+4) History (go back button)
+5) Params
+6) Protected Pages
 
-2) Bug: Clicking through the link pages does not properly switch between the page components. Fix this.
 
-3) Swap the order so the navigation bar is below the page content.
-
-4) Modify the app so '/contact' shows "Contact Page" and "/contact/us" shows "Contact Page for US".
-
-STRETCH:
-
-1) Add a login field in App.
-2) Update the app state with the username entered in the login field.
-3) Pass that username down to your Home page so that it's personalized and says "Hello <username>, welcome home."
 
 */
 
@@ -36,11 +34,86 @@ export default function App() {
     <div class="App">
       <Router>
         <Nav />
-        <Route path="/" component={Home} />
-        <Route path="/about/" component={About} />
-        <Route path="/contact/" component={Contact} />
-        <Route path="*" component={NotFound} />
+        <Switch>
+          <Route path="/" exact>
+            <Home />
+          </Route>
+          <Route path="/params/:username">
+            <Params />
+          </Route>
+          <Route path="/history">
+            <History />
+          </Route>
+          <PrivateRoute path="/private">
+            <Private />
+          </PrivateRoute>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+        </Switch>
       </Router>
+    </div>
+  );
+}
+
+const Home = () => <p> Welcome Home </p>;
+
+const Params = () => {
+  const params = useParams();
+  return <p>Hello {params.username}</p>;
+};
+
+const History = () => {
+  const location = useLocation();
+  const history = useHistory();
+  console.log("history", history);
+  return (
+    <p>
+      You are current here "{location.pathname}",{" "}
+      <button onClick={history.goBack}>Go Back</button>
+    </p>
+  );
+};
+
+const Private = () => <p>Secret stuff here</p>;
+
+const fakeAuth = {
+  isAuthenticated: false,
+  authenticate(cb) {
+    fakeAuth.isAuthenticated = true;
+    setTimeout(cb, 100); // fake async
+  },
+  signout(cb) {
+    fakeAuth.isAuthenticated = false;
+    setTimeout(cb, 100);
+  }
+};
+
+const PrivateRoute = ({ children, ...rest }) => {
+  return (
+    <Route {...rest}>
+      {fakeAuth.isAuthenticated ? (
+        { ...children }
+      ) : (
+        <Redirect to="/login"></Redirect>
+      )}
+    </Route>
+  );
+};
+
+function LoginPage() {
+  let history = useHistory();
+
+  let login = () => {
+    fakeAuth.authenticate(() => {
+      history.replace("/private");
+    });
+  };
+
+  return (
+    <div>
+      <p>You must log in to view the page at '/private'</p>
+      <button onClick={login}>Log in</button>
     </div>
   );
 }
@@ -48,31 +121,24 @@ export default function App() {
 function Nav() {
   return (
     <>
-      <Link to="/?name=jamis">Home</Link> | <Link to="/about/red">About</Link> |{" "}
-      <Link to="/contact">Contact</Link> | <Link to="/random">random</Link>
+      <NavLink activeStyle={{ color: "blue", fontWeight: 800 }} exact to="/">
+        Home
+      </NavLink>{" "}
+      |{" "}
+      <NavLink activeStyle={{ color: "blue", fontWeight: 800 }} to="/history">
+        History
+      </NavLink>{" "}
+      |{" "}
+      <NavLink
+        activeStyle={{ color: "blue", fontWeight: 800 }}
+        to="/params/shauna"
+      >
+        Params
+      </NavLink>{" "}
+      |{" "}
+      <NavLink activeStyle={{ color: "blue", fontWeight: 800 }} to="/private">
+        Private
+      </NavLink>
     </>
   );
-}
-
-function Home() {
-  var params = new URLSearchParams(useLocation().search);
-  var name = params.get("name");
-  return (
-    <main class="home">
-      <p>Hello {name}!</p>
-    </main>
-  );
-}
-
-function About() {
-  const color = "";
-  return <p>Hey this is about me! I want </p>;
-}
-
-function Contact() {
-  return <p>Contact Page</p>;
-}
-
-function NotFound() {
-  return <p>Oh no! Page not found!</p>;
 }
